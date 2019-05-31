@@ -132,10 +132,7 @@ def insert_songplay_table (cur, conn):
     """
     
     column_name = ('songplay_id', 'start_time', 'user_id', 'level', 'song_id', 'artist_id', 'session_id', 'location', 'user_agent')
-    songplay_table_insert = ("""
-        INSERT INTO songplay (start_time, user_id, level, song_id, artist_id, 
-                               session_id, location, user_agent) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)   
-    """)
+
     df=pd.read_sql_query(song_select, conn)
     df=df[df.page == 'NextSong']
     
@@ -147,7 +144,7 @@ def insert_songplay_table (cur, conn):
             cur.execute(songplay_table_insert, (start_time, r.userid, r.level, r.song_id, r.artist_id, r.sessionid, r.location, str(r.useragent) ) )
         except psycopg2.Error as e:
             print('insert_users_data error:\n')
-            print(e)       
+            print(e) 
         
 def main():
     config = configparser.ConfigParser()
