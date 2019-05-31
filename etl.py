@@ -21,7 +21,7 @@ def insert_songs_table (cur, conn):
     songs_df = pd.read_sql_query('SELECT DISTINCT song_id, title, artist_id, year, duration  from staging_songs', conn)
 
     for i, r in songs_df.iterrows():
-    	try:
+        try:
             cur.execute(songs_table_insert, list(r))
         except psycopg2.Error as e:
             print('insert_users_data error:\n')
@@ -43,11 +43,11 @@ def insert_artists_table (cur, conn):
     artists_df = pd.read_sql_query (query, conn)
            
     for i, r in artists_df.iterrows():
-    	try:
-                cur.execute(artists_table_insert, (r.artist_id, r.artist_name, r.artist_location, r.artist_latitude, r.artist_longitude))
+        try:
+            cur.execute(artists_table_insert, (r.artist_id, r.artist_name, r.artist_location, r.artist_latitude, r.artist_longitude))
         except psycopg2.Error as e:
-                print('insert_artists_data error:\n')
-                print(e)
+            print('insert_artists_data error:\n')
+            print(e)
                 
                
 def insert_users_table (cur, conn):
@@ -65,14 +65,15 @@ def insert_users_table (cur, conn):
     cur.execute('SELECT DISTINCT userid, firstName, lastName, gender, level  from staging_events')
     users_list = cur.fetchall()
 
-    for r in uers_list:
+    for r in users_list:
         if isinstance (r[0], int):
             try:
                 cur.execute(users_table_insert, (r[0], r[1], r[2], r[3], r[4]))
             except psycopg2.Error as e:
                 print('insert_users_data error:\n')
                 print(e)
-		
+
+
 def insert_time_table (cur, conn):
     """
      Description: Populate time dimention Table  in Sparkify database 
@@ -92,7 +93,7 @@ def insert_time_table (cur, conn):
 
     for r in ts_list:
         ts = int(r[0])
-        dts = dt.datetime.fromtimestamp(ts/1000.0)
+        dts = r.datetime.fromtimestamp(ts/1000.0)
         start_time = dts.isoformat()
         week_of_year = dts.isocalendar()[1]
         #  start_time, hour, day, week, month, year, weekday
@@ -101,8 +102,8 @@ def insert_time_table (cur, conn):
         except psycopg2.Error as e:
             print('insert_users_data error:\n')
             print(e)
-		
-		
+
+
 def insert_dimention_tables(cur, conn):
 	"""
 	 Description: Populate Dimention Tables in Sparkify database 
@@ -115,11 +116,11 @@ def insert_dimention_tables(cur, conn):
 	 Returns:  None
 
 	"""   
-    insert_songs_table (cur, conn)
-    insert_artists_table (cur, conn)
+	insert_songs_table (cur, conn)
+	insert_artists_table (cur, conn)
 	insert_users_table (cur, conn)
 	insert_time_table (cur, conn)
-	
+
 def insert_songplay_table (cur, conn):
     """
      Description: Populate Dimention Tables in Sparkify database 
@@ -139,7 +140,7 @@ def insert_songplay_table (cur, conn):
     df=df[df.page == 'NextSong']
     
     for i, r in df.iterrows():
-        dts = dt.datetime.fromtimestamp(r.ts/1000.0)
+        dts = r.datetime.fromtimestamp(r.ts/1000.0)
         start_time = dts.isoformat()
         try:
             print((start_time, r.userid, r.level, r.song_id, r.artist_id, r.sessionid, r.location, r.useragent) )
@@ -159,9 +160,9 @@ def main():
     
     insert_dimention_tables(cur, conn)
     
-	insert_songplay_tables (cur, conn)
-	
-	cur.close()
+    insert_songplay_tables (cur, conn)
+    
+    cur.close()
     conn.close()
 
 
