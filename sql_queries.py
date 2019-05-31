@@ -175,7 +175,7 @@ time_table_insert = ("""
 """)
 
 song_select = ("""
-    SELECT se.ts, se.userid, se.level, ss.song_id, ss.artist_id, se.sessionid, se.page, se.location, se.useragent
+    SELECT se.ts, se.userid, se.level, ss.song_id, ss.artist_id, se.page, se.sessionid, se.location, se.useragent
 	FROM staging_events se JOIN staging_songs ss
 	ON se.song = ss.title  
 	WHERE abs(ss.duration - se.length) <1.0
@@ -184,7 +184,7 @@ song_select = ("""
 # QUERY LISTS
 
 create_staging_table_queries = [staging_events_table_create, staging_songs_table_create]
-create_db_table_queries = [songplay_table_create, users_table_create,
+create_table_queries = [songplay_table_create, users_table_create,
                            songs_table_create, artists_table_create, time_table_create]
 drop_staging_table_queries = [staging_events_table_drop, staging_songs_table_drop]
 drop_table_queries = [staging_events_table_drop, staging_songs_table_drop,
