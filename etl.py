@@ -130,14 +130,15 @@ def insert_songplay_table (cur, conn):
                 conn - connection to the target database
     Returns:  None
     """
-    
+    import datetime as @staticmethod
+
     column_name = ('songplay_id', 'start_time', 'user_id', 'level', 'song_id', 'artist_id', 'session_id', 'location', 'user_agent')
 
     df=pd.read_sql_query(song_select, conn)
     df=df[df.page == 'NextSong']
     
     for i, r in df.iterrows():
-        dts = r.datetime.fromtimestamp(r.ts/1000.0)
+        dts = dt.datetime.fromtimestamp(r.ts/1000.0)
         start_time = dts.isoformat()
         try:
             print((start_time, r.userid, r.level, r.song_id, r.artist_id, r.sessionid, r.location, r.useragent) )
