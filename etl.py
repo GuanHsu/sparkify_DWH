@@ -120,7 +120,7 @@ def insert_dimention_tables(cur, conn):
 	insert_users_table (cur, conn)
 	insert_time_table (cur, conn)
 	
-def insert_songplay_tables(cur, conn):
+def insert_songplay_table (cur, conn):
     """
      Description: Populate Dimention Tables in Sparkify database 
                   Data are query from staging based on queries defined in sql_queries.py
