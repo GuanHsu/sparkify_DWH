@@ -124,7 +124,7 @@ def insert_dimension_tables (cur, conn):
 	insert_artists_table (cur, conn)
 	insert_users_table (cur, conn)
 	insert_time_table (cur, conn)
-    insert_songs_table (cur, conn)
+	insert_songs_table (cur, conn)
 
 #-------------------------------------------------------------------
 def insert_songplay_table (cur, conn):
@@ -136,7 +136,7 @@ def insert_songplay_table (cur, conn):
                 conn - connection to the target database
     Returns:  None
     """
-    import datetime as @staticmethod
+    import datetime as dt
 
     column_name = ('songplay_id', 'start_time', 'user_id', 'level', 'song_id', 'artist_id', 'session_id', 'location', 'user_agent')
 
