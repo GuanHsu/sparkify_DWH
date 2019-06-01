@@ -162,7 +162,7 @@ def insert_songplay_table (cur, conn):
         dts = dt.datetime.fromtimestamp(r.ts/1000.0)
         start_time = dts.isoformat()
         try:
-            print((start_time, r.userid, r.level, r.song_id, r.artist_id, r.sessionid, r.location, r.useragent) )
+            #print((start_time, r.userid, r.level, r.song_id, r.artist_id, r.sessionid, r.location, r.useragent) )
             cur.execute(songplay_table_insert, (start_time, r.userid, r.level, r.song_id, r.artist_id, r.sessionid, r.location, str(r.useragent) ) )
         except psycopg2.Error as e:
             print('insert_users_data error:\n')
