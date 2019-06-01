@@ -53,6 +53,9 @@ def create_tables(cur, conn):
         None
     """   
     run_queries (cur, conn, create_table_queries)
+    run_queries (cur, conn, create_staging_table_queries)
+
+
 
 # -- Set up DWH & DB connections
 
