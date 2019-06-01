@@ -5,7 +5,15 @@ from create_tables import *
 import pandas as pd
 import boto3
 import json
-    
+
+#-------------------------------------------------------------------
+def load_staging_tables(cur, conn):
+    for query in copy_table_queries:
+        print(query)
+        cur.execute(query)
+        conn.commit()
+
+
 #-------------------------------------------------------------------
 def insert_songs_table (cur, conn):
     """
@@ -110,21 +118,28 @@ def insert_time_table (cur, conn):
     
 #-------------------------------------------------------------------
 def insert_dimension_tables (cur, conn):
-	"""
-	 Description: Populate Dimention Tables in Sparkify database 
-				  Data are query from staging based on queries defined in sql_queries.py
-				  Some minimal data quality check is done at insertion
+    """
+    Description: Populate Dimention Tables in Sparkify database 
+                Data are query from staging based on queries defined in sql_queries.py
+                Some minimal data quality check is done at insertion
 
-	 Arguments:  cur - cursor of the database connection
-				 conn - connection to the target database
+    Arguments:  cur - cursor of the database connection
+                conn - connection to the target database
 
-	 Returns:  None
+    Returns:  None
 
-	"""   
-	insert_artists_table (cur, conn)
-	insert_users_table (cur, conn)
-	insert_time_table (cur, conn)
-	insert_songs_table (cur, conn)
+    """   
+    print("insert_artists_table")
+    insert_artists_table (cur, conn)
+
+    print("insert_users_table")
+    insert_users_table (cur, conn)
+
+    print("insert_time_table")
+    insert_time_table (cur, conn)
+
+    print("insert_songs_table")
+    insert_songs_table (cur, conn)
 
 #-------------------------------------------------------------------
 def insert_songplay_table (cur, conn):
@@ -165,7 +180,7 @@ def main():
     
     insert_dimension_tables (cur, conn)
     
-    insert_songplay_tables (cur, conn)
+    insert_songplay_table (cur, conn)
     
     cur.close()
     conn.close()
