@@ -44,7 +44,6 @@ def start_DWH (AWS_DWH_ConfigFile):
     DWH_DB                 = config.get("DWH","DWH_DB")
     DWH_DB_USER            = config.get("DWH","DWH_DB_USER")
     DWH_DB_PASSWORD        = config.get("DWH","DWH_DB_PASSWORD")
-    DWH_PORT               = config.get("DWH","DWH_PORT")
 
     DWH_IAM_ROLE_NAME      = config.get("DWH", "DWH_IAM_ROLE_NAME")
 
@@ -55,6 +54,13 @@ def start_DWH (AWS_DWH_ConfigFile):
                        aws_access_key_id=KEY,
                        aws_secret_access_key=SECRET
                        )
+
+    iam = boto3.client('iam',aws_access_key_id=KEY,
+                     aws_secret_access_key=SECRET,
+                     region_name='us-west-2'
+                  )
+    roleArn = iam.get_role(RoleName=DWH_IAM_ROLE_NAME)['Role']['Arn']
+
     try:
         response = redshift.create_cluster(        
             #HW
@@ -74,11 +80,11 @@ def start_DWH (AWS_DWH_ConfigFile):
     except Exception as e:
         print(e)
 
-    print('Do not proceed until the Cluster is up and available.  Then run get_DWH_Info to get info needed to run DWH activities')
+    print('Do not proceed until the Cluster is up and available.  Then run get_DWH_Info(CLUSTER_IDENTIFIER) to get a cluster pro object to proceed')
 
     return DWH_CLUSTER_IDENTIFIER
 
-def get_DWH_Info (DWH_CLUSTER_IDENTIFIER):
+def get_DWH_Info (DWH_CLUSTER_IDENTIFIER, AWS_DWH_ConfigFile):
     """
     Description: 
         Get information to a AWS Redshift DWH Cluster based on CLUSTER IDENTIFER
@@ -89,6 +95,12 @@ def get_DWH_Info (DWH_CLUSTER_IDENTIFIER):
     Returns:  
         myClusterPro - A cluster property object for the newly started Redshift Cluster
     """   
+    config = configparser.ConfigParser()
+    config.read(AWS_DWH_ConfigFile)
+
+    KEY                    = config.get('AWS','KEY')
+    SECRET                 = config.get('AWS','SECRET')
+
     redshift = boto3.client('redshift',
                        region_name="us-west-2",
                        aws_access_key_id=KEY,
@@ -103,7 +115,7 @@ def get_DWH_Info (DWH_CLUSTER_IDENTIFIER):
 
     return newClusterProps
 
-def open_DWH_Port (newClusterProps, port):
+def open_DWH_Port (newClusterProps, AWS_DWH_ConfigFile):
     """
     Description: 
         Open an incoming  TCP port to access the cluster ednpoint.  This should only need to be done once for a Cluster.
@@ -115,6 +127,11 @@ def open_DWH_Port (newClusterProps, port):
     Returns:  
         None
     """
+    config = configparser.ConfigParser()
+    config.read(AWS_DWH_ConfigFile)
+    KEY                    = config.get('AWS','KEY')
+    SECRET                 = config.get('AWS','SECRET')
+    port                   = config.get("DWH","DWH_PORT")
     ec2 = boto3.resource('ec2',
                        region_name="us-west-2",
                        aws_access_key_id=KEY,
@@ -146,9 +163,9 @@ def main():
 
     CLUSTER_IDENTIFIER = start_DWH(AWS_DWH_ConfigFile)
     #  This program should have the option to add to the config 
-    newClusterProp = get_DWH_Info (CLUSTER_IDENTIFIER) 
+    newClusterProp = get_DWH_Info (CLUSTER_IDENTIFIER, AWS_DWH_ConfigFile) 
 
-    open_DWH_Port (newClusterProp, DWH_PORT)
+    open_DWH_Port (newClusterProp, AWS_DWH_ConfigFile)
 
 
 if __name__ == "__main__":
