@@ -86,7 +86,7 @@ songs_table_create = ("""
        artist_id  text   NOT NULL, 
        year       int    NOT NULL, 
        duration   float
-    ) diststyle all;   
+    ) ;   
 """)
 
 artists_table_create = ("""
