@@ -97,7 +97,7 @@ def insert_time_table (cur, conn):
 
     for r in ts_list:
         ts = int(r[0])
-        dts = r.datetime.fromtimestamp(ts/1000.0)
+        dts = dt.datetime.fromtimestamp(ts/1000.0)
         start_time = dts.isoformat()
         week_of_year = dts.isocalendar()[1]
         #  start_time, hour, day, week, month, year, weekday
