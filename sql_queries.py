@@ -187,8 +187,7 @@ create_staging_table_queries = [staging_events_table_create, staging_songs_table
 create_table_queries = [songplay_table_create, users_table_create,
                            songs_table_create, artists_table_create, time_table_create]
 drop_staging_table_queries = [staging_events_table_drop, staging_songs_table_drop]
-drop_table_queries = [staging_events_table_drop, staging_songs_table_drop,
-                      songplay_table_drop, users_table_drop, songs_table_drop, artists_table_drop, time_table_drop]
+drop_table_queries = [songplay_table_drop, users_table_drop, songs_table_drop, artists_table_drop, time_table_drop]
 copy_table_queries = [staging_events_copy, staging_songs_copy]
 insert_table_queries = [songplay_table_insert, users_table_insert,
                         songs_table_insert, artists_table_insert, time_table_insert]
