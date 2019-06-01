@@ -89,6 +89,12 @@ def get_DWH_Info (DWH_CLUSTER_IDENTIFIER):
     Returns:  
         myClusterPro - A cluster property object for the newly started Redshift Cluster
     """   
+    redshift = boto3.client('redshift',
+                       region_name="us-west-2",
+                       aws_access_key_id=KEY,
+                       aws_secret_access_key=SECRET
+                       )
+
     newClusterProps = redshift.describe_clusters(ClusterIdentifier=DWH_CLUSTER_IDENTIFIER)['Clusters'][0]
     prettyRedshiftProps(newClusterProps)
 
@@ -109,8 +115,13 @@ def open_DWH_Port (newClusterProps, port):
     Returns:  
         None
     """
+    ec2 = boto3.resource('ec2',
+                       region_name="us-west-2",
+                       aws_access_key_id=KEY,
+                       aws_secret_access_key=SECRET
+                    )
     try:
-        vpc = ec2.Vpc(id=myClusterProps['VpcId'])
+        vpc = ec2.Vpc(id=newClusterProps['VpcId'])
         defaultSg = list(vpc.security_groups.all())[0]
         print(defaultSg)
         defaultSg.authorize_ingress(
