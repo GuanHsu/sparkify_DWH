@@ -37,6 +37,7 @@ def drop_tables(cur, conn):
     Returns:  
         None
     """   
+    run_queries (cur, conn, drop_staging_table_queries)
     run_queries (cur, conn, drop_table_queries)
 
 
@@ -52,8 +53,9 @@ def create_tables(cur, conn):
     Returns:  
         None
     """   
-    run_queries (cur, conn, create_table_queries)
     run_queries (cur, conn, create_staging_table_queries)
+    run_queries (cur, conn, create_table_queries)
+
 
 
 
