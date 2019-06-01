@@ -5,7 +5,8 @@ from create_tables import *
 import pandas as pd
 import boto3
 import json
-
+    
+#-------------------------------------------------------------------
 def insert_songs_table (cur, conn):
     """
      Description: Populate songs dimention Table  in Sparkify database 
@@ -18,15 +19,16 @@ def insert_songs_table (cur, conn):
      Returns:  None
 
     """   
-    songs_df = pd.read_sql_query('SELECT DISTINCT song_id, title, artist_id, year, duration  from staging_songs', conn)
+    songs_df = pd.read_sql_query('SELECT DISTINCT artist_id, song_id, title, duration, year  from staging_songs', conn)
 
     for i, r in songs_df.iterrows():
         try:
-            cur.execute(songs_table_insert, list(r))
+            cur.execute(songs_table_insert, (r.song_id, r.title, r.artist_id, r.year, r.duration))
         except psycopg2.Error as e:
             print('insert_users_data error:\n')
             print(e)
-                
+    
+#-------------------------------------------------------------------                
 def insert_artists_table (cur, conn):
     """
      Description: Populate artists dimention Table  in Sparkify database 
@@ -49,7 +51,8 @@ def insert_artists_table (cur, conn):
             print('insert_artists_data error:\n')
             print(e)
                 
-               
+    
+#-------------------------------------------------------------------               
 def insert_users_table (cur, conn):
     """
      Description: Populate users dimention Table  in Sparkify database 
@@ -73,7 +76,8 @@ def insert_users_table (cur, conn):
                 print('insert_users_data error:\n')
                 print(e)
 
-
+    
+#-------------------------------------------------------------------
 def insert_time_table (cur, conn):
     """
      Description: Populate time dimention Table  in Sparkify database 
@@ -103,8 +107,9 @@ def insert_time_table (cur, conn):
             print('insert_users_data error:\n')
             print(e)
 
-
-def insert_dimention_tables(cur, conn):
+    
+#-------------------------------------------------------------------
+def insert_dimension_tables (cur, conn):
 	"""
 	 Description: Populate Dimention Tables in Sparkify database 
 				  Data are query from staging based on queries defined in sql_queries.py
@@ -116,11 +121,12 @@ def insert_dimention_tables(cur, conn):
 	 Returns:  None
 
 	"""   
-	insert_songs_table (cur, conn)
 	insert_artists_table (cur, conn)
 	insert_users_table (cur, conn)
 	insert_time_table (cur, conn)
+    insert_songs_table (cur, conn)
 
+#-------------------------------------------------------------------
 def insert_songplay_table (cur, conn):
     """
      Description: Populate Dimention Tables in Sparkify database 
@@ -146,7 +152,8 @@ def insert_songplay_table (cur, conn):
         except psycopg2.Error as e:
             print('insert_users_data error:\n')
             print(e) 
-        
+
+#-------------------------------------------------------------------   
 def main():
     config = configparser.ConfigParser()
     config.read('dwh.cfg')
@@ -156,7 +163,7 @@ def main():
     
     load_staging_tables(cur, conn)
     
-    insert_dimention_tables(cur, conn)
+    insert_dimension_tables (cur, conn)
     
     insert_songplay_tables (cur, conn)
     
