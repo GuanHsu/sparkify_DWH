@@ -27,6 +27,12 @@ def insert_songs_table (cur, conn):
      Returns:  None
 
     """   
+    song_select = ("""
+        SELECT artist_id, song_id, title, duration, year
+        	FROM staging_events se 
+                JOIN staging_songs ss ON se.song = ss.title  
+	        WHERE abs(ss.duration - se.length) <1.0
+    """)
     songs_df = pd.read_sql_query('SELECT DISTINCT artist_id, song_id, title, duration, year  from staging_songs', conn)
 
     for i, r in songs_df.iterrows():
@@ -171,9 +177,9 @@ def insert_songplay_table (cur, conn):
 #-------------------------------------------------------------------   
 def main():
     config = configparser.ConfigParser()
-    config.read('dwh.cfg')
+    config.read('dwh-sp.cfg')
 
-    cur, conn = connect_DWH_db ('dwh.cfg')
+    cur, conn = connect_DWH_db ('dwh-sp.cfg')
     create_tables(cur, conn)
     
     load_staging_tables(cur, conn)
