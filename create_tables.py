@@ -130,7 +130,7 @@ def main():
         None.   Should set AWS_DWH_ConfigFile as an Env var or parameter, something that is not hardcoded.
     """      
     
-    AWS_DWH_ConfigFile = 'dwh.cfg'
+    AWS_DWH_ConfigFile = 'dwh-sp.cfg'
     cur, conn = connect_DWH_db(AWS_DWH_ConfigFile)
     
     drop_tables(cur, conn)
