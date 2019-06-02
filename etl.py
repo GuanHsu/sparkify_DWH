@@ -33,7 +33,7 @@ def insert_songs_table (cur, conn):
                 JOIN staging_songs ss ON se.song = ss.title  
 	        WHERE abs(ss.duration - se.length) <1.0
     """)
-    songs_df = pd.read_sql_query('SELECT DISTINCT artist_id, song_id, title, duration, year  from staging_songs', conn)
+    songs_df = pd.read_sql_query(song_select, conn)
 
     for i, r in songs_df.iterrows():
         try:
