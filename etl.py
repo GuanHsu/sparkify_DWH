@@ -28,7 +28,7 @@ def insert_songs_table (cur, conn):
 
     """   
     song_select = ("""
-        SELECT artist_id, song_id, title, duration, year
+        SELECT DISTINCT artist_id, song_id, title, duration, year
         	FROM staging_events se 
                 JOIN staging_songs ss ON se.song = ss.title  
 	        WHERE abs(ss.duration - se.length) <1.0
