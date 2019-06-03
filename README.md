@@ -1,4 +1,4 @@
-# Project: Sparkify  DWH on AWS
+# Project: ETL pipeline for Sparkify  DWH on AWS
 
 ### Introduction
 
@@ -82,9 +82,9 @@ Two notebook files are provided for effective test & help with the development o
     etl.ipynb   
 
 
-Appendix:
 
-#### DWH on AWS
+
+#### Appendix: DWH on AWS
 
 There should already be a running Amazon Redshift Cluster serving as our data warehouse on AWS as defined by the config file
 
