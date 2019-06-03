@@ -5,6 +5,7 @@ from create_tables import *
 import pandas as pd
 import boto3
 import json
+import datetime as dt
 
 #-------------------------------------------------------------------
 def load_staging_tables(cur, conn):
@@ -27,13 +28,7 @@ def insert_songs_table (cur, conn):
      Returns:  None
 
     """   
-    song_select = ("""
-        SELECT DISTINCT artist_id, song_id, title, duration, year
-        	FROM staging_events se 
-                JOIN staging_songs ss ON se.song = ss.title  
-	        WHERE abs(ss.duration - se.length) <1.0
-    """)
-    songs_df = pd.read_sql_query(song_select, conn)
+    songs_df = pd.read_sql_query(songs_select, conn)
 
     for i, r in songs_df.iterrows():
         try:
@@ -55,8 +50,7 @@ def insert_artists_table (cur, conn):
      Returns:  None
 
     """   
-    query = 'SELECT DISTINCT artist_id, artist_latitude, artist_longitude, artist_location, artist_name from staging_songs'
-    artists_df = pd.read_sql_query (query, conn)
+    artists_df = pd.read_sql_query (artists_select, conn)
            
     for i, r in artists_df.iterrows():
         try:
@@ -104,7 +98,6 @@ def insert_time_table (cur, conn):
      Returns:  None
 
     """   
-    import datetime as dt
     
     cur.execute('SELECT DISTINCT ts  from staging_events')
     ts_list = cur.fetchall()
@@ -157,11 +150,10 @@ def insert_songplay_table (cur, conn):
                 conn - connection to the target database
     Returns:  None
     """
-    import datetime as dt
-
+    
     column_name = ('songplay_id', 'start_time', 'user_id', 'level', 'song_id', 'artist_id', 'session_id', 'location', 'user_agent')
 
-    df=pd.read_sql_query(song_select, conn)
+    df=pd.read_sql_query(songplay_select, conn)
     df=df[df.page == 'NextSong']
     
     for i, r in df.iterrows():
@@ -176,20 +168,31 @@ def insert_songplay_table (cur, conn):
 
 #-------------------------------------------------------------------   
 def main():
-    config = configparser.ConfigParser()
-    config.read('dwh-sp.cfg')
 
+    print('\n\n ETL load for Sparkify DWH: \n\n 1.    Connect to Sparkify DWH:\n')
+    print(dt.datetime.now())
     cur, conn = connect_DWH_db ('dwh-sp.cfg')
+
+    print('\n\n 2.    Create Tables:\n')
+    drop_tables(cur, conn)
     create_tables(cur, conn)
     
+    print('\n\n 3.    Load Staging Tables:\n')
+    print(dt.datetime.now())
     load_staging_tables(cur, conn)
     
+    print('\n\n 4.    Load Dimensional Tables:\n')
+    print(dt.datetime.now())
     insert_dimension_tables (cur, conn)
     
+    print('\n\n 5.    Load Fact Table songplay:\n')
+    print(dt.datetime.now())
     insert_songplay_table (cur, conn)
     
+    print('\n\n ETL Load Process Completed.\n')
     cur.close()
     conn.close()
+    print(dt.datetime.now())
 
 
 if __name__ == "__main__":
