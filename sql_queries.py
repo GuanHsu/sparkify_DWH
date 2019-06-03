@@ -174,10 +174,22 @@ time_table_insert = ("""
 	INSERT INTO time (start_time, hour, day, week, month, year, weekday) VALUES (%s, %s, %s, %s, %s, %s, %s)  
 """)
 
-song_select = ("""
+artists_select = ("""
+        SELECT DISTINCT artist_id, artist_latitude, artist_longitude, artist_location, artist_name 
+            FROM staging_songs ss 
+            JOIN staging_events se   ON ss.title = se.song 
+	        WHERE abs(ss.duration - se.length) <1.0
+       """)
+songs_select = ("""
+        SELECT DISTINCT artist_id, song_id, title, duration, year 
+            FROM staging_songs ss 
+            JOIN staging_events se   ON ss.title = se.song 
+	        WHERE abs(ss.duration - se.length) <1.0
+        """)
+songplay_select = ("""
     SELECT se.ts, se.userid, se.level, ss.song_id, ss.artist_id, se.page, se.sessionid, se.location, se.useragent
-	FROM staging_events se JOIN staging_songs ss
-	ON se.song = ss.title  
+	FROM staging_events se 
+    JOIN staging_songs ss ON se.song = ss.title  
 	WHERE abs(ss.duration - se.length) <1.0
 """)
 
